@@ -1,11 +1,14 @@
 import {
   BaseEntity,
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { genSalt, hash } from 'bcrypt';
 
 @Entity({ name: 'user' })
 export class User extends BaseEntity {
@@ -34,4 +37,10 @@ export class User extends BaseEntity {
 
   @Column({ name: 'PASSWORD', type: 'varchar', nullable: false })
   password: string;
+
+  @BeforeInsert()
+  async encryptPassword() {
+    const salt = await genSalt(8);
+    this.password = await hash(this.password, salt);
+  }
 }

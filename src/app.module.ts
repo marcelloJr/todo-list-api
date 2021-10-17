@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { TodoModule } from './modules/todo/todo.module';
+import { TodoItemModule } from './modules/todo-item/todo-item.module';
+import { TodoCategoryModule } from './modules/todo-category/todo-category.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -17,10 +19,15 @@ import { AuthModule } from './modules/auth/auth.module';
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
+      autoLoadEntities: true,
     }),
     AuthModule,
+    TodoModule,
+    TodoItemModule,
+    TodoCategoryModule,
+    UserModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}

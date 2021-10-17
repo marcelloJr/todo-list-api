@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
-import Messages from 'src/utils/messages/Users';
+import Messages from '../../../utils/messages/Users';
 
 export class CreateUserDto {
   @IsString({ message: Messages.fullName.IS_STRING })

@@ -1,15 +1,10 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import Message from '../../utils/messages/Users';
+import Messages from '../../utils/messages/Users';
 
 @Injectable()
 export class UserService {
@@ -17,20 +12,10 @@ export class UserService {
 
   create(createUserDto: CreateUserDto): Promise<User> {
     const user = this.repository.create(createUserDto);
-    return this.repository
-      .save(user)
-      .then((user) => {
-        delete user.password;
-        return user;
-      })
-      .catch(() => {
-        throw new HttpException(
-          {
-            message: Message.password.EMAIL_UNIQUE,
-          },
-          HttpStatus.BAD_REQUEST,
-        );
-      });
+    return this.repository.save(user).then((user) => {
+      delete user.password;
+      return user;
+    });
   }
 
   findAll(): Promise<User[]> {
@@ -43,20 +28,10 @@ export class UserService {
   }
 
   findOne(id: string): Promise<User> {
-    return this.repository
-      .findOne(id)
-      .then((user) => {
-        delete user.password;
-        return user;
-      })
-      .catch(() => {
-        throw new HttpException(
-          {
-            message: Message.USER_NOT_EXISTS,
-          },
-          HttpStatus.BAD_REQUEST,
-        );
-      });
+    return this.repository.findOne(id).then((user) => {
+      delete user.password;
+      return user;
+    });
   }
 
   async findByEmail(email: string): Promise<User> {
@@ -72,17 +47,8 @@ export class UserService {
         ...updateUserDto,
       })
       .catch(() => {
-        throw new HttpException(
-          {
-            message: Message.USER_NOT_EXISTS,
-          },
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new NotFoundException({ message: Messages.USER_NOT_EXISTS });
       });
-
-    if (!user) {
-      throw new NotFoundException(`User ${id} not found`);
-    }
 
     return this.repository.save(user).then((user) => {
       delete user.password;
